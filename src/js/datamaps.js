@@ -120,7 +120,7 @@
 
     if (this.options.responsive) {
       d3.select(this.options.element).style({'position': 'relative', 'padding-bottom': (this.options.aspectRatio*100) + '%'});
-      d3.select(this.options.element).select('svg').style({'position': 'absolute', 'width': '100%', 'height': '100%'});
+      d3.select(this.options.element).select('svg').style({'width': '100%', 'height': '100%'});
       d3.select(this.options.element).select('svg').select('g').selectAll('path').style('vector-effect', 'non-scaling-stroke');
 
     }
