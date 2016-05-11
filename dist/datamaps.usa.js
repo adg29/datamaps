@@ -121,7 +121,7 @@
     if (this.options.responsive) {
       d3.select(this.options.element).style({'position': 'relative', 'padding-bottom': (this.options.aspectRatio*100) + '%'});
       d3.select(this.options.element).select('svg').style({'position': 'absolute', 'width': '100%', 'height': '100%', 'top': 0, 'left': 0});
-      d3.select(this.options.element).select('svg').attr({'viewBox': [0, (height || this.options.element.offsetHeight)/3, width || element.offsetWidth, height || element.offsetHeight].join(' ')});
+      d3.select(this.options.element).select('svg').attr({'viewBox': [0, (height || this.options.element.offsetHeight)/5, width || element.offsetWidth, height || element.offsetHeight].join(' ')});
       d3.select(this.options.element).select('svg').select('g').selectAll('path').style('vector-effect', 'non-scaling-stroke');
 
     }
@@ -745,7 +745,7 @@
       var newsize = options.element.clientWidth,
           oldsize = d3.select( options.element).select('svg').attr('data-width');
           
-      d3.select(options.element).select('svg').attr({'viewBox': [0, (options.element.offsetHeight)/3, newsize, options.element.offsetHeight].join(' ')});
+      d3.select(options.element).select('svg').attr({'viewBox': [0, (options.element.offsetHeight)/5, newsize, options.element.offsetHeight].join(' ')});
 
       if ( this.options.zoomConfig.zoomOnClick && (typeof centered !='undefined' && centered!= null) ) {
         resetZoom.call(this);
