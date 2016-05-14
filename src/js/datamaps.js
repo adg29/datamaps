@@ -497,7 +497,163 @@
       });
   }
 
+  function handleMerge (layer, data, options) {
+    var self = this;
+    var africaSelected = {
+        "DZA": "1",
+        "AGO": "1",
+        "BEN": "1",
+        "BWA": "1",
+        "BFA": "1",
+        "BDI": "1",
+        "CMR": "1",
+        "CPV": "1",
+        "CAF": "1",
+        "TCD": "1",
+        "COM": "1",
+        "COG": "1",
+        "DJI": "1",
+        "EGY": "1",
+        "GNQ": "1",
+        "ERI": "1",
+        "ETH": "1",
+        "GAB": "1",
+        "GMB": "1",
+        "GHA": "1",
+        "GNB": "1",
+        "GIN": "1",
+        "CIV": "1",
+        "KEN": "1",
+        "LSO": "1",
+        "LBR": "1",
+        "LBY": "1",
+        "MDG": "1",
+        "MWI": "1",
+        "MLI": "1",
+        "MRT": "1",
+        "MUS": "1",
+        "MYT": "1",
+        "MAR": "1",
+        "MOZ": "1",
+        "NAM": "1",
+        "NER": "1",
+        "NGA": "1",
+        "REU": "1",
+        "RWA": "1",
+        "STP": "1",
+        "SEN": "1",
+        "SYC": "1",
+        "SLE": "1",
+        "SOM": "1",
+        "ZAF": "1",
+        "SHN": "1",
+        "SDN": "1",
+        "SWZ": "1",
+        "TZA": "1",
+        "TGO": "1",
+        "TUN": "1",
+        "UGA": "1",
+        "COD": "1",
+        "ZMB": "1",
+        "ZWE": "1",
+        "SSD": "1",
+    };
+var asiaSelected = {
+    "AFG": "1",
+    "ARM": "1",
+    "AZE": "1",
+    "BHR": "1",
+    "BGD": "1",
+    "BTN": "1",
+    "BRN": "1",
+    "KHM": "1",
+    "CHN": "1",
+    "CXR": "1",
+    "CCK": "1",
+    "IOT": "1",
+    "GEO": "1",
+    "HKG": "1",
+    "IND": "1",
+    "IDN": "1",
+    "IRN": "1",
+    "IRQ": "1",
+    "ISR": "1",
+    "JPN": "1",
+    "JOR": "1",
+    "KAZ": "1",
+    "PRK": "1",
+    "KOR": "1",
+    "KWT": "1",
+    "KGZ": "1",
+    "LAO": "1",
+    "LBN": "1",
+    "MAC": "1",
+    "MYS": "1",
+    "MDV": "1",
+    "MNG": "1",
+    "MMR": "1",
+    "NPL": "1",
+    "OMN": "1",
+    "PAK": "1",
+    "PHL": "1",
+    "QAT": "1",
+    "SAU": "1",
+    "SGP": "1",
+    "LKA": "1",
+    "SYR": "1",
+    "TWN": "1",
+    "TJK": "1",
+    "THA": "1",
+    "TUR": "1",
+    "TKM": "1",
+    "ARE": "1",
+    "UZB": "1",
+    "VNM": "1",
+    "YEM": "1",
+    "PSE": "1"
+};
 
+    if ( !data || (data && !data.slice) ) {
+    }
+
+    var worldTopo = Datamap.prototype.worldTopo;
+    var countries = topojson.feature(worldTopo, worldTopo.objects.world);
+
+    var projectedPath = this.path;
+
+    var africaSelection = {type: "FeatureCollection", features: countries.features.filter(function(d) { return d.id in africaSelected; })};
+    var asiaSelection = {type: "FeatureCollection", features: countries.features.filter(function(d) { return d.id in asiaSelected; })};
+
+    layer
+      .append("path")
+          .datum(africaSelection)
+          .attr("class", "country continent-level selected datamaps-subunit africa")
+          .attr('id','africaContinent')
+          .attr("d", projectedPath)
+          .on('click', function (d) { 
+            clickZoom.call(self, d) 
+            if ( !options || (options && !options.callback) ) {
+              // throw "Datamaps Error - specify callback ";
+            }else{
+              callback('africa');
+            }
+          });
+    layer
+      .append("path")
+          .datum(asiaSelection)
+          .attr("class", "country continent-level selected datamaps-subunit asia")
+          .attr('id','africaContinent')
+          .attr("d", projectedPath)
+          .on('click', function (d) { 
+            clickZoom.call(self, d) 
+            if ( !options || (options && !options.callback) ) {
+              // throw "Datamaps Error - specify callback ";
+            }else{
+              callback('asia');
+            }
+          });
+
+  }
   function handleBubbles (layer, data, options ) {
     var self = this,
         fillData = this.options.fills,
@@ -720,6 +876,7 @@
 
     // Add core plugins to this instance
     this.addPlugin('bubbles', handleBubbles);
+    this.addPlugin('mergeContinents', handleMerge);
     this.addPlugin('legend', addLegend);
     this.addPlugin('arc', handleArcs);
     this.addPlugin('labels', handleLabels);
