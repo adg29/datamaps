@@ -2,7 +2,7 @@
   var svg;
 
   // Save off default references
-  var d3 = window.d3, topojson = window.topojson;
+  var d3 = window.d3, topojson = window.topojson, centered, responsiveScale = 1;
 
   var defaultOptions = {
     scope: 'world',
@@ -56,6 +56,10 @@
         highlightFillOpacity: 0.85,
         exitDelay: 100,
         key: JSON.stringify
+    },
+    zoomConfig: {
+        zoomOnClick: true,
+        zoomFactor: 0.8
     },
     arcConfig: {
       strokeColor: '#DD1C77',
@@ -116,7 +120,8 @@
 
     if (this.options.responsive) {
       d3.select(this.options.element).style({'position': 'relative', 'padding-bottom': (this.options.aspectRatio*100) + '%'});
-      d3.select(this.options.element).select('svg').style({'position': 'absolute', 'width': '100%', 'height': '100%'});
+      d3.select(this.options.element).select('svg').style({'position': 'absolute', 'width': '100%', 'height': '100%', 'top': 0, 'left': 0});
+      d3.select(this.options.element).select('svg').attr({'viewBox': [0, (height || this.options.element.offsetHeight)/5, width || element.offsetWidth, height || element.offsetHeight].join(' ')});
       d3.select(this.options.element).select('svg').select('g').selectAll('path').style('vector-effect', 'non-scaling-stroke');
 
     }
@@ -283,6 +288,12 @@
           d3.selectAll('.datamaps-hoverover').style('display', 'none');
         });
     }
+
+    if ( this.options.zoomConfig.zoomOnClick ) {
+       svg.selectAll('.datamaps-subunit')
+         .on('click', function(d) { clickZoom.call(self, d) });
+     }
+ 
 
     function moveToFront() {
       this.parentNode.appendChild(this);
@@ -486,7 +497,163 @@
       });
   }
 
+  function handleMerge (layer, data, options) {
+    var self = this;
+    var africaSelected = {
+        "DZA": "1",
+        "AGO": "1",
+        "BEN": "1",
+        "BWA": "1",
+        "BFA": "1",
+        "BDI": "1",
+        "CMR": "1",
+        "CPV": "1",
+        "CAF": "1",
+        "TCD": "1",
+        "COM": "1",
+        "COG": "1",
+        "DJI": "1",
+        "EGY": "1",
+        "GNQ": "1",
+        "ERI": "1",
+        "ETH": "1",
+        "GAB": "1",
+        "GMB": "1",
+        "GHA": "1",
+        "GNB": "1",
+        "GIN": "1",
+        "CIV": "1",
+        "KEN": "1",
+        "LSO": "1",
+        "LBR": "1",
+        "LBY": "1",
+        "MDG": "1",
+        "MWI": "1",
+        "MLI": "1",
+        "MRT": "1",
+        "MUS": "1",
+        "MYT": "1",
+        "MAR": "1",
+        "MOZ": "1",
+        "NAM": "1",
+        "NER": "1",
+        "NGA": "1",
+        "REU": "1",
+        "RWA": "1",
+        "STP": "1",
+        "SEN": "1",
+        "SYC": "1",
+        "SLE": "1",
+        "SOM": "1",
+        "ZAF": "1",
+        "SHN": "1",
+        "SDN": "1",
+        "SWZ": "1",
+        "TZA": "1",
+        "TGO": "1",
+        "TUN": "1",
+        "UGA": "1",
+        "COD": "1",
+        "ZMB": "1",
+        "ZWE": "1",
+        "SSD": "1",
+    };
+var asiaSelected = {
+    "AFG": "1",
+    "ARM": "1",
+    "AZE": "1",
+    "BHR": "1",
+    "BGD": "1",
+    "BTN": "1",
+    "BRN": "1",
+    "KHM": "1",
+    "CHN": "1",
+    "CXR": "1",
+    "CCK": "1",
+    "IOT": "1",
+    "GEO": "1",
+    "HKG": "1",
+    "IND": "1",
+    "IDN": "1",
+    "IRN": "1",
+    "IRQ": "1",
+    "ISR": "1",
+    "JPN": "1",
+    "JOR": "1",
+    "KAZ": "1",
+    "PRK": "1",
+    "KOR": "1",
+    "KWT": "1",
+    "KGZ": "1",
+    "LAO": "1",
+    "LBN": "1",
+    "MAC": "1",
+    "MYS": "1",
+    "MDV": "1",
+    "MNG": "1",
+    "MMR": "1",
+    "NPL": "1",
+    "OMN": "1",
+    "PAK": "1",
+    "PHL": "1",
+    "QAT": "1",
+    "SAU": "1",
+    "SGP": "1",
+    "LKA": "1",
+    "SYR": "1",
+    "TWN": "1",
+    "TJK": "1",
+    "THA": "1",
+    "TUR": "1",
+    "TKM": "1",
+    "ARE": "1",
+    "UZB": "1",
+    "VNM": "1",
+    "YEM": "1",
+    "PSE": "1"
+};
 
+    if ( !data || (data && !data.slice) ) {
+    }
+
+    var worldTopo = Datamap.prototype.worldTopo;
+    var countries = topojson.feature(worldTopo, worldTopo.objects.world);
+
+    var projectedPath = this.path;
+
+    var africaSelection = {type: "FeatureCollection", features: countries.features.filter(function(d) { return d.id in africaSelected; })};
+    var asiaSelection = {type: "FeatureCollection", features: countries.features.filter(function(d) { return d.id in asiaSelected; })};
+
+    layer
+      .append("path")
+          .datum(africaSelection)
+          .attr("class", "country continent-level selected datamaps-subunit africa")
+          .attr('id','africaContinent')
+          .attr("d", projectedPath)
+          .on('click', function (d) { 
+            clickZoom.call(self, d) 
+            if ( !options || (options && !options.callback) ) {
+              // throw "Datamaps Error - specify callback ";
+            }else{
+              callback('africa');
+            }
+          });
+    layer
+      .append("path")
+          .datum(asiaSelection)
+          .attr("class", "country continent-level selected datamaps-subunit asia")
+          .attr('id','africaContinent')
+          .attr("d", projectedPath)
+          .on('click', function (d) { 
+            clickZoom.call(self, d) 
+            if ( !options || (options && !options.callback) ) {
+              // throw "Datamaps Error - specify callback ";
+            }else{
+              callback('asia');
+            }
+          });
+
+  }
   function handleBubbles (layer, data, options ) {
     var self = this,
         fillData = this.options.fills,
@@ -603,6 +770,11 @@
         return JSON.stringify(d);
       });
 
+    if ( self.options.zoomConfig.zoomOnClick ) {
+      bubbles
+        .on('click', function (d) { clickZoom.call(self, d) });
+    }
+
     bubbles.exit()
       .transition()
         .delay(options.exitDelay)
@@ -613,6 +785,62 @@
       return typeof datum !== 'undefined' && typeof datum.latitude !== 'undefined' && typeof datum.longitude !== 'undefined';
     }
   }
+
+  function clickZoom(d) {
+    var self = this,
+        zoomFactor  = self.options.zoomConfig.zoomFactor,
+        width   = self.options.element.clientWidth,
+        height  = self.options.element.clientHeight,
+        bounds;
+    if (centered === d
+    || isNaN(zoomFactor)
+    || zoomFactor <= 0) {
+      return resetZoom.call(self);
+    }
+
+    self.svg.selectAll("path").classed("active", false);
+    centered = d;
+
+    if ( d.radius ) { //Circle
+        var cx = d3.select(d3.event.target).attr("cx");
+        var cy = d3.select(d3.event.target).attr("cy");
+        bounds = [
+            [ Number(cx) - d.radius, Number(cy) - d.radius ],
+            [ Number(cx) + d.radius, Number(cy) + d.radius ]
+        ];
+    } else {
+      bounds  = self.path.bounds(d)
+    }
+
+    var dx      =  bounds[1][0] - bounds[0][0],
+        dy      =  bounds[1][1] - bounds[0][1],
+        x       = (bounds[0][0] + bounds[1][0]) / 2,
+        y       = (bounds[0][1] + bounds[1][1]) / 2,
+        scale   = zoomFactor / Math.max(dx / width, dy / height),
+        translate = [width / 2 - scale * x, height / 2 - scale * y];
+
+    self.svg.selectAll("path")
+      .classed("active", centered && function( d ) { return d === centered; });
+
+    self.svg.selectAll("g").transition()
+      .duration(750)
+      .style("stroke-width", 1.5 / scale + "px")
+      .attr("transform", "translate(" + translate + ")scale(" + scale + ")");
+  }
+
+  function resetZoom() {
+
+    this.svg.selectAll("path")
+      .classed("active", false);
+    centered = null;//d3.select(null);
+
+    this.svg.selectAll("g").transition()
+      .duration(750)
+      .style("stroke-width", "1.5px")
+      .attr('transform', 'scale(' + responsiveScale + ')')
+  }
+
+
 
   // Stolen from underscore.js
   function defaults(obj) {
@@ -648,6 +876,7 @@
 
     // Add core plugins to this instance
     this.addPlugin('bubbles', handleBubbles);
+    this.addPlugin('mergeContinents', handleMerge);
     this.addPlugin('legend', addLegend);
     this.addPlugin('arc', handleArcs);
     this.addPlugin('labels', handleLabels);
@@ -667,11 +896,25 @@
     var self = this;
     var options = self.options;
 
+    var centeredBeforeResize = centered;
+
     if (options.responsive) {
       var newsize = options.element.clientWidth,
           oldsize = d3.select( options.element).select('svg').attr('data-width');
+          
+      d3.select(options.element).select('svg').attr({'viewBox': [0, (options.element.offsetHeight)/5, newsize, options.element.offsetHeight].join(' ')});
 
-      d3.select(options.element).select('svg').selectAll('g').attr('transform', 'scale(' + (newsize / oldsize) + ')');
+      if ( this.options.zoomConfig.zoomOnClick && (typeof centered !='undefined' && centered!= null) ) {
+        resetZoom.call(this);
+      }
+
+      responsiveScale = (newsize / oldsize);
+      d3.select(options.element).select('svg').selectAll('g').attr('transform', 'scale(' + responsiveScale + ')');
+
+      if ( this.options.zoomConfig.zoomOnClick && (typeof centeredBeforeResize !='undefined' && centeredBeforeResize!=null) ) {
+        // if clickZoom is not called then responsiveness works
+        clickZoom.call(this,centeredBeforeResize);
+      }
     }
   }
 
@@ -731,6 +974,36 @@
         self.options.done(self);
       }
   };
+
+  Datamap.prototype.toggleZoom = function(bool) {
+    var self = this,
+        zoomOnClick = this.options.zoomConfig.zoomOnClick,
+        svg = d3.select( this.options.element ).select('svg');
+
+    var toggleEvents = function (setTo) {
+      if (setTo === undefined) { setTo = !zoomOnClick }
+
+      if (setTo === false) { //Disable
+        svg.selectAll('.datamaps-bubble, .datamaps-subunit')
+          .on('click', null);
+      } else { //Enable
+        svg.selectAll('.datamaps-bubble, .datamaps-subunit')
+          .on('click', function(d) { clickZoom.call(self, d) });
+      }
+    }
+
+    if (bool !== undefined && typeof bool == 'boolean') {
+      toggleEvents(bool);
+      this.options.zoomConfig.zoomOnClick = bool;
+    } else if (bool == undefined) {
+      toggleEvents();
+      this.options.zoomConfig.zoomOnClick = !zoomOnClick;
+    } else {
+      throw "Datamaps Error - toggleZoom() must call with a boolean";
+    }
+
+  }
+  
   /**************************************
                 TopoJSON
   ***************************************/
