@@ -635,7 +635,7 @@ var asiaSelected = {
             if ( !options || (options && !options.callback) ) {
               // throw "Datamaps Error - specify callback ";
             }else{
-              callback('africa');
+              options.callback('africa');
             }
           });
     layer
@@ -649,7 +649,7 @@ var asiaSelected = {
             if ( !options || (options && !options.callback) ) {
               // throw "Datamaps Error - specify callback ";
             }else{
-              callback('asia');
+              options.callback('asia');
             }
           });
 
