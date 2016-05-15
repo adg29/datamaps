@@ -618,15 +618,23 @@ var asiaSelected = {
 
     var worldTopo = Datamap.prototype.worldTopo;
     var countries = topojson.feature(worldTopo, worldTopo.objects.world);
+    var countriesGeo = worldTopo.objects.world.geometries;
 
     var projectedPath = this.path;
 
     var africaSelection = {type: "FeatureCollection", features: countries.features.filter(function(d) { return d.id in africaSelected; })};
     var asiaSelection = {type: "FeatureCollection", features: countries.features.filter(function(d) { return d.id in asiaSelected; })};
 
+
+    // var regionGeo = {type: "GeometryCollection",geometries: _.where(us.objects['us-states'].geometries,{properties:{region:r}} ) };
+    var africaSelectionGeo = {type: "GeometryCollection", geometries:countriesGeo.filter(function(d) { return d.id in africaSelected; })};
+    var asiaSelectionGeo = {type: "GeometryCollection", geometries:countriesGeo.filter(function(d) { return d.id in asiaSelected; })};
+
+
     layer
       .append("path")
-          .datum(africaSelection)
+          // .datum(africaSelection)
+          .datum(topojson.mesh(worldTopo, africaSelectionGeo))
           .attr("class", "country continent-level selected datamaps-subunit africa")
           .attr('id','africaContinent')
           .attr("d", projectedPath)
@@ -640,9 +648,10 @@ var asiaSelected = {
           });
     layer
       .append("path")
-          .datum(asiaSelection)
+          // .datum(asiaSelection)
+          .datum(topojson.mesh(worldTopo, asiaSelectionGeo))
           .attr("class", "country continent-level selected datamaps-subunit asia")
-          .attr('id','africaContinent')
+          .attr('id','asiaContinent')
           .attr("d", projectedPath)
           .on('click', function (d) { 
             clickZoom.call(self, d) 
