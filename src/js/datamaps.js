@@ -60,8 +60,8 @@
     zoomConfig: {
         zoomOnClick: true,
         zoomFactor: 0.8,
-        zoomCallback: function(d){
-          console.log('zoomCallback',d);
+        zoomCallback: function(instance,status){
+          console.log('zoomCallback',instance,status);
         }
     },
     arcConfig: {
@@ -879,7 +879,7 @@ var asiaSelected = {
       .style("stroke-width", "1.5px")
       .attr('transform', 'scale(' + responsiveScale + ')')
 
-    zoomCallback(this);
+    this.options.zoomConfig.zoomCallback(this,'reset');
   }
 
 
