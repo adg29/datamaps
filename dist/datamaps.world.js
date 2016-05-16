@@ -189,7 +189,22 @@
     var subunits = this.svg.select('g.datamaps-subunits');
     if ( subunits.empty() ) {
       subunits = this.addLayer('datamaps-subunits', null, true);
-    }
+            if (this.options.zoomConfig.zoomOnClick) {
+
+                var background = this.addLayer('background', null, true);
+                background.append("rect")
+                    .attr("fill", "none")
+                    .style('pointer-events', 'all')
+                    .attr("class", "background")
+                    .attr("width", this.options.element.offsetWidth)
+                    .attr("height", this.options.element.offsetHeight)
+                    .on("click", resetZoom.bind(this));
+
+
+
+
+            }
+        }
 
     var geoData = topojson.feature( data, data.objects[ this.options.scope ] ).features;
     if ( geoConfig.hideAntarctica ) {
@@ -292,6 +307,9 @@
     if ( this.options.zoomConfig.zoomOnClick ) {
        svg.selectAll('.datamaps-subunit')
          .on('click', function(d) { clickZoom.call(self, d) });
+
+
+
      }
  
 
