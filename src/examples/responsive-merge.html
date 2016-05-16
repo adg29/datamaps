@@ -1,48 +1,78 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <style>
-        .active { fill: blue !important;}  
 
-<style>
-.country {
-  fill: #ccc;
-}
+<head>
+    <style>
+    .active {
+        fill: blue !important;
+    }
+    
+    <style> .country {
+        fill: #ccc;
+    }
+    
+    .country-boundary {
+        fill: none;
+        stroke: #fff;
+    }
+    
+    .country.selected {
+        fill: orange;
+    }
+    
+    .country.selected-boundary {
+        fill: none;
+        stroke: #000;
+        stroke-width: 2px;
+    }
+    </style>
+</head>
 
-.country-boundary {
-  fill: none;
-  stroke: #fff;
-}
+<body>
+    <div id="container1"></div>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
+    <script src="../js/components/d3/d3.min.js"></script>
+    <script src="../js/components/topojson/topojson.js"></script>
+    <script src="../rel/datamaps.all.js"></script>
+    <script>
+    var map = new Datamap({
+        element: document.getElementById('container1'),
+        responsive: true,
 
-.country.selected {
-  fill: orange;
-}
+        setProjection: function(element) {
+            this.projectionConfig = {};
 
-.country.selected-boundary {
-  fill: none;
-  stroke: #000;
-  stroke-width: 2px;
-}
+            var scale, translate;
+            var scaleO = (element.offsetWidth + 1) / 2 / Math.PI;
+            scale = scaleO * 1.2;
+            scale = scaleO;
+            var translateO = [element.offsetWidth / 2, element.offsetHeight / 1.3];
+            translate = translateO;
 
-        </style>
-    </head>
-    <body>
-        <div id="container1"></div>
-        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
-        <script src="../js/components/d3/d3.min.js"></script>
-        <script src="../js/components/topojson/topojson.js"></script>
-        <script src="../rel/datamaps.all.js"></script>
-        <script>
-            var map = new Datamap({
-                element: document.getElementById('container1'),
-                responsive: true
-            });
+            // this.projectionConfig.center = center;
+            this.projectionConfig.scale = scale;
+            this.projectionConfig.translate = translate;
 
-            map.mergeContinents();
+            var projection = d3.geo.equirectangular()
+                .scale(scale)
+                .translate(translate);
+            var path = d3.geo.path()
+                .projection(projection);
+            return {
+                path: path,
+                projection: projection
+            };
+        }
 
-            window.addEventListener('resize', function(event){
-                map.resize();
-            });
-        </script>
-    </body>
+
+    });
+
+    map.mergeContinents();
+
+    window.addEventListener('resize', function(event) {
+        map.resize();
+    });
+    </script>
+</body>
+
 </html>
