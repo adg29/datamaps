@@ -854,7 +854,7 @@ var asiaSelected = {
         initial world translate
         var translateO= [element.offsetWidth / 2, element.offsetHeight /  1.3];
         */
-        if(typeof (this.projectionConfig!=='undefined')){
+        if(typeof(this.projectionConfig) !=='undefined'){
           // scale   = (zoomFactor / Math.max(dx / (width), dy / (height))) * 1.0,
           translate = [this.projectionConfig.translate[0] - scale * x, this.projectionConfig.translate[1] - scale * y];
         }
