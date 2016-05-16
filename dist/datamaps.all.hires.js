@@ -59,7 +59,10 @@
     },
     zoomConfig: {
         zoomOnClick: true,
-        zoomFactor: 0.8
+        zoomFactor: 0.8,
+        zoomCallback: function(instance,status){
+          console.log('zoomCallback',instance,status);
+        }
     },
     arcConfig: {
       strokeColor: '#DD1C77',
@@ -875,6 +878,8 @@ var asiaSelected = {
       .duration(750)
       .style("stroke-width", "1.5px")
       .attr('transform', 'scale(' + responsiveScale + ')')
+
+    this.options.zoomConfig.zoomCallback(this,'reset');
   }
 
 
