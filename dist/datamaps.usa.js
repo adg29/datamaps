@@ -194,14 +194,14 @@
       subunits = this.addLayer('datamaps-subunits', null, true);
             if (this.options.zoomConfig.zoomOnClick) {
 
-                var background = this.addLayer('background', null, true);
-                background.append("rect")
-                    .attr("fill", "none")
-                    .style('pointer-events', 'all')
-                    .attr("class", "background")
-                    .attr("width", this.options.element.offsetWidth)
-                    .attr("height", this.options.element.offsetHeight)
-                    .on("click", resetZoom.bind(this));
+                // var background = this.addLayer('background', null, true);
+                // background.append("rect")
+                //     .attr("fill", "none")
+                //     .style('pointer-events', 'all')
+                //     .attr("class", "background")
+                //     .attr("width", this.options.element.offsetWidth)
+                //     .attr("height", this.options.element.offsetHeight)
+                //     .on("click", resetZoom.bind(this));
 
 
 
