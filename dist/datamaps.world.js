@@ -947,6 +947,7 @@ var asiaSelected = {
       d3.select(options.element).select('svg').attr({'viewBox': [0, (options.element.offsetHeight)/5, newsize, options.element.offsetHeight].join(' ')});
 
       if ( this.options.zoomConfig.zoomOnClick && (typeof centered !='undefined' && centered!= null) ) {
+        console.log('resetZoom on resize');
         resetZoom.call(this);
       }
 
