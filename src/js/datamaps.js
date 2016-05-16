@@ -618,15 +618,21 @@ var asiaSelected = {
 
     var worldTopo = Datamap.prototype.worldTopo;
     var countries = topojson.feature(worldTopo, worldTopo.objects.world);
+    var countriesGeo = worldTopo.objects.world.geometries;
 
     var projectedPath = this.path;
 
     var africaSelection = {type: "FeatureCollection", features: countries.features.filter(function(d) { return d.id in africaSelected; })};
     var asiaSelection = {type: "FeatureCollection", features: countries.features.filter(function(d) { return d.id in asiaSelected; })};
 
+    var africaSelectionGeo = {type: "GeometryCollection", geometries:countriesGeo.filter(function(d) { return d.id in africaSelected; })};
+    var asiaSelectionGeo = {type: "GeometryCollection", geometries:countriesGeo.filter(function(d) { return d.id in asiaSelected; })};
+
+
     layer
       .append("path")
           .datum(africaSelection)
+          // .datum(topojson.mesh(worldTopo, africaSelectionGeo))
           .attr("class", "country continent-level selected datamaps-subunit africa")
           .attr('id','africaContinent')
           .attr("d", projectedPath)
@@ -641,6 +647,7 @@ var asiaSelected = {
     layer
       .append("path")
           .datum(asiaSelection)
+          // .datum(topojson.mesh(worldTopo, asiaSelectionGeo))
           .attr("class", "country continent-level selected datamaps-subunit asia")
           .attr('id','africaContinent')
           .attr("d", projectedPath)
@@ -815,9 +822,21 @@ var asiaSelected = {
     var dx      =  bounds[1][0] - bounds[0][0],
         dy      =  bounds[1][1] - bounds[0][1],
         x       = (bounds[0][0] + bounds[1][0]) / 2,
-        y       = (bounds[0][1] + bounds[1][1]) / 2,
+        y       = (bounds[0][1] + bounds[1][1]) / 2;
         scale   = zoomFactor / Math.max(dx / width, dy / height),
         translate = [width / 2 - scale * x, height / 2 - scale * y];
+
+
+        /*
+        initial world projection scale
+        (element.offsetWidth + 1) / 2 / Math.PI
+        initial world translate
+        var translateO= [element.offsetWidth / 2, element.offsetHeight /  1.3];
+        */
+        if(typeof this.projectionConfig!==undefined){
+          // scale   = (zoomFactor / Math.max(dx / (width), dy / (height))) * 1.0,
+          translate = [this.projectionConfig.translate[0] - scale * x, this.projectionConfig.translate[1] - scale * y];
+        }
 
     self.svg.selectAll("path")
       .classed("active", centered && function( d ) { return d === centered; });
