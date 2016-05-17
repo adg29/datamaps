@@ -748,7 +748,23 @@ var asiaSelected = {
           var fillColor = fillData[ val(datum.fillKey, options.fillKey, datum) ];
           return fillColor || fillData.defaultFill;
         })
-        .on('mouseover', function ( datum ) {
+        .on('mouseover', bubbleHoverover.call(this,datum) )
+        .on('click', bubbleHoverover.call(this,datum) )
+        .on('mouseout', function ( datum ) {
+          var $this = d3.select(this);
+
+          if (options.highlightOnHover) {
+            //reapply previous attributes
+            var previousAttributes = JSON.parse( $this.attr('data-previousAttributes') );
+            for ( var attr in previousAttributes ) {
+              $this.style(attr, previousAttributes[attr]);
+            }
+          }
+
+          d3.selectAll('.datamaps-hoverover').style('display', 'none');
+        })
+
+        var bubbleHoverover = function(datum){
           var $this = d3.select(this);
 
           if (options.highlightOnHover) {
@@ -772,20 +788,8 @@ var asiaSelected = {
           if (options.popupOnHover) {
             self.updatePopup($this, datum, options, svg);
           }
-        })
-        .on('mouseout', function ( datum ) {
-          var $this = d3.select(this);
 
-          if (options.highlightOnHover) {
-            //reapply previous attributes
-            var previousAttributes = JSON.parse( $this.attr('data-previousAttributes') );
-            for ( var attr in previousAttributes ) {
-              $this.style(attr, previousAttributes[attr]);
-            }
-          }
-
-          d3.selectAll('.datamaps-hoverover').style('display', 'none');
-        })
+        }
 
     bubbles.transition()
       .duration(400)
