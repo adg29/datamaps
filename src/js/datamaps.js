@@ -933,6 +933,14 @@ var asiaSelected = {
   }
 
   // Resize map
+  Datamap.prototype.reProject = function () {
+    return this.draw();
+  };
+
+  Datamap.prototype.resetZoom = function(){
+    resetZoom.call(this);
+  }
+
   Datamap.prototype.resize = function () {
 
     var self = this;
