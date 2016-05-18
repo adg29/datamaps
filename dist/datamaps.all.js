@@ -908,6 +908,7 @@ var asiaSelected = {
     this.options = defaults(options, defaultOptions);
     this.options.geographyConfig = defaults(options.geographyConfig, defaultOptions.geographyConfig);
     this.options.projectionConfig = defaults(options.projectionConfig, defaultOptions.projectionConfig);
+    this.options.zoomConfig = defaults(options.zoomConfig, defaultOptions.zoomConfig);
     this.options.bubblesConfig = defaults(options.bubblesConfig, defaultOptions.bubblesConfig);
     this.options.arcConfig = defaults(options.arcConfig, defaultOptions.arcConfig);
 
